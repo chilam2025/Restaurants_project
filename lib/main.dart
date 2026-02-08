@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'signup_page.dart';
-import 'create_restaurant_page.dart';
+import 'auth/login.dart';
+import 'auth/register.dart';
+import 'screens/owner_dashboard.dart';
+import 'screens/worker_dashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,8 +20,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const SignupPage(), // After signup, redirect to CreateRestaurantPage
+      title: 'Restaurants App',
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+        '/owner': (context) => const OwnerDashboard(),
+        '/worker': (context) => const WorkerDashboard(),
+      },
     );
   }
 }
