@@ -31,40 +31,47 @@ class AuthService {
 
   // 📝 REGISTER
   Future<String?> register({
-    required String email,
-    required String password,
-    required String role,
-    String? restaurantId,
-  }) async {
-    try {
-      final userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  required String email,
+  required String password,
+  required String role,
+  String? restaurantId,
+}) async {
+  try {
+    print('REGISTER: creating auth user');
 
-      final data = {
-        'email': email,
-        'role': role,
-        'createdAt': Timestamp.now(),
-      };
+    final userCredential =
+        await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      if (role == 'worker' && restaurantId != null) {
-        data['restaurantId'] = restaurantId;
-      }
+    print('REGISTER: auth success');
 
-      await _firestore
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set(data);
+    final data = {
+      'email': email,
+      'role': role,
+      'createdAt': Timestamp.now(),
+    };
 
-      return role;
-    } on FirebaseAuthException catch (e) {
-      return e.message;
-    } catch (e) {
-      return 'Registration failed';
+    if (role == 'worker' && restaurantId != null) {
+      data['restaurantId'] = restaurantId;
     }
+
+    print('REGISTER: writing to firestore');
+
+    await _firestore
+        .collection('users')
+        .doc(userCredential.user!.uid)
+        .set(data);
+
+    print('REGISTER: firestore write success');
+
+    return role;
+  } catch (e) {
+    print('REGISTER ERROR: $e');
+    return e.toString();
   }
+}
 
   // 🚪 LOGOUT
   Future<void> logout() async {
